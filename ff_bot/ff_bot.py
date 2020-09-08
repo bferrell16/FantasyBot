@@ -119,7 +119,7 @@ def get_trophies(league, week=None):
 
 def bot_main(function):
     try:
-        bot_id = '39b7fac2c6280829cdef2f69c1'
+        bot_id = 'e9042ce779195e8b2e2685691c'
     except KeyError:
         bot_id = 1
 
