@@ -34,6 +34,25 @@ class GroupMeBot(object):
 
             return r
 
+    def send_message_with_picture(self, text, picture=None):
+        #Sends a message to the chatroom
+        template = {
+                    "bot_id": self.bot_id,
+                    "text": text,
+                    'picture_url':picture,
+                    "attachments": []
+                    }
+
+        headers = {'content-type': 'application/json'}
+
+        if self.bot_id not in (1, "1", ''):
+            r = requests.post("https://api.groupme.com/v3/bots/post",
+                              data=json.dumps(template), headers=headers)
+            if r.status_code != 202:
+                raise GroupMeException('Invalid BOT_ID')
+
+            return r
+
 def get_scoreboard_short(league, week=None):
     #Gets current week's scoreboard
     box_scores = league.box_scores(week=week)
@@ -59,10 +78,36 @@ def get_power_rankings(league, week=None):
     #It's weighted 80/15/5 respectively
     power_rankings = league.power_rankings(week=week)
 
-    score = ['%s - %s' % (i[0], i[1].team_name) for i in power_rankings
-             if i]
+    score = ['%s - %s' % (i[0], i[1].team_name) for i in power_rankings if i]
     text = ['Power Rankings'] + score
     return '\n'.join(text)
+
+def he_who_sucks_the_most(league, week=None):
+    if not week:
+        week = league.current_week
+    power_rankings = league.power_rankings(week=week)
+    pic = ""
+    if power_rankings[9][1].team_name == 'The EBITDAddys':
+        pic = "https://i.imgur.com/YIjpIaD.jpg"
+    elif power_rankings[9][1].team_name == 'Tua Bortions':
+        pic = 'https://i.imgur.com/Xrxfq07.jpg'
+    elif power_rankings[9][1].team_name == 'College Park Party Poopers':
+        pic = 'https://i.imgur.com/EnNldNg.jpg'
+    elif power_rankings[9][1].team_name == 'Mona HandJobs':
+        pic = 'https://i.imgur.com/gjCXYIS.jpg'
+    elif power_rankings[9][1].team_name == 'Team Pfarr':
+        pic = 'https://i.imgur.com/zlWWE6L.jpg'
+    elif power_rankings[9][1].team_name == 'D.C. Defenders':
+        pic = 'https://i.imgur.com/dIRLZb4.jpg'
+    elif power_rankings[9][1].team_name == 'Mr. Larceny':
+        pic = 'https://i.imgur.com/tqKpSKo.jpg'
+    elif power_rankings[9][1].team_name == 'All Mahomies Hate Football':
+        pic = 'https://i.imgur.com/zlWWE6L.jpg'
+    elif power_rankings[9][1].team_name == 'Team Whitney':
+        pic = 'https://i.imgur.com/zpAmYm7.jpg'
+    elif power_rankings[9][1].team_name == 'Supreme Lord Marty':
+        pic = 'https://i.imgur.com/pX79oCQ.jpg'
+    return pic
 
 def get_trophies(league, week=None):
     #Gets trophies for highest score, lowest score, closest score, and biggest win
@@ -119,7 +164,7 @@ def get_trophies(league, week=None):
 
 def bot_main(function):
     try:
-        bot_id = 'e9042ce779195e8b2e2685691c'
+        bot_id = 'e9042ce779195e8b2e2685691c' #e9042ce779195e8b2e2685691c
     except KeyError:
         bot_id = 1
 
@@ -169,14 +214,9 @@ def bot_main(function):
     test = False
     if test:
         week = league.current_week - 1
-        text = text + "\nLeague A \n"
-        text = text +"Final " + get_scoreboard_short(league, week=week)
-        text = text + "\n" + get_trophies(league, week=week)
-        text = text + "\n\nLeague B \n"
-        text = text + "Final " + get_scoreboard_short(league2, week=week)
-        text = text + "\n" + get_trophies(league2, week=week)
-        print(text)
-        bot.send_message(text)
+        sucks = he_who_sucks_the_most(league2, week=week)
+        bot.send_message_with_picture('', sucks)
+
 
     if function=="get_scoreboard_short":
         text = get_scoreboard_short(league)
@@ -196,16 +236,20 @@ def bot_main(function):
         text = text + "\n\nLeague B \n"
         text = text + "Final " + get_scoreboard_short(league2, week=week)
         text = text + "\n" + get_trophies(league2, week=week)
+    elif function=="worst_team":
+        week = league.current_week - 1
+        sucks = he_who_sucks_the_most(league2, week=week)
+        bot.send_message_with_picture('', sucks)
     elif function=="init":
         try:
-            text = "Sup you sexy fucks"
+            text = ''
         except KeyError:
             #do nothing here, empty init message
             pass
     else:
         text = "Something happened. HALP"
 
-    if text != '' and not test:
+    if text != '' and not test and function!="init" and function != "worst_team":
         bot.send_message(text)
 
     if test:
@@ -234,14 +278,14 @@ if __name__ == '__main__':
     sched = BlockingScheduler(job_defaults={'misfire_grace_time': 15*60})
 
     #power rankings:                     tuesday evening at 6:30pm local time.
-    #matchups:                           thursday evening at 7:30pm east coast time.
-    #close scores (within 15.99 points): monday evening at 6:30pm east coast time.
+    #worst player SVP picture            tuesday evening at 6:31pm local time.
     #trophies:                           tuesday morning at 7:30am local time.
-    #score update:                       friday, monday, and tuesday morning at 7:30am local time.
-    #score update:                       sunday at 4pm, 8pm east coast time.
 
     sched.add_job(bot_main, 'cron', ['get_power_rankings'], id='power_rankings',
         day_of_week='tue', hour=18, minute=30, start_date=ff_start_date, end_date=ff_end_date,
+        timezone=my_timezone, replace_existing=True)
+    sched.add_job(bot_main, 'cron', ['worst_team'], id='worst_team',
+        day_of_week='tue', hour=18, minute=31, start_date=ff_start_date, end_date=ff_end_date,
         timezone=my_timezone, replace_existing=True)
     sched.add_job(bot_main, 'cron', ['get_final'], id='final',
         day_of_week='tue', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
