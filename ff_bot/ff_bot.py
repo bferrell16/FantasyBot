@@ -104,7 +104,7 @@ def he_who_sucks_the_most(league, week=None):
     elif power_rankings[9][1].team_name == 'All Mahomies Hate Football':
         pic = 'https://i.imgur.com/zlWWE6L.jpg'
     elif power_rankings[9][1].team_name == 'Team Whitney':
-        pic = 'https://i.imgur.com/zpAmYm7.jpg'
+        pic = 'https://i.imgur.com/XkcljmK.jpg'
     elif power_rankings[9][1].team_name == 'Supreme Lord Marty':
         pic = 'https://i.imgur.com/pX79oCQ.jpg'
     return pic
