@@ -282,10 +282,10 @@ if __name__ == '__main__':
     #trophies:                           tuesday morning at 7:30am local time.
 
     sched.add_job(bot_main, 'cron', ['get_power_rankings'], id='power_rankings',
-        day_of_week='tue', hour=18, minute=30, start_date=ff_start_date, end_date=ff_end_date,
+        day_of_week='tue', hour=18, minute=0, start_date=ff_start_date, end_date=ff_end_date,
         timezone=my_timezone, replace_existing=True)
     sched.add_job(bot_main, 'cron', ['worst_team'], id='worst_team',
-        day_of_week='tue', hour=18, minute=31, start_date=ff_start_date, end_date=ff_end_date,
+        day_of_week='tue', hour=18, minute=1, start_date=ff_start_date, end_date=ff_end_date,
         timezone=my_timezone, replace_existing=True)
     sched.add_job(bot_main, 'cron', ['get_final'], id='final',
         day_of_week='tue', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
