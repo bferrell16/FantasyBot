@@ -104,7 +104,7 @@ def he_who_sucks_the_most(league, week=None):
     elif power_rankings[9][1].team_name == 'All Mahomies Hate Football':
         pic = 'https://i.imgur.com/zlWWE6L.jpg'
     elif power_rankings[9][1].team_name == 'Team Whitney':
-        pic = 'https://i.imgur.com/XkcljmK.jpg'
+        pic = 'https://i.imgur.com/ToXrxI6.jpg'
     elif power_rankings[9][1].team_name == 'Supreme Lord Marty':
         pic = 'https://i.imgur.com/pX79oCQ.jpg'
     return pic
@@ -282,13 +282,13 @@ if __name__ == '__main__':
     #trophies:                           tuesday morning at 7:30am local time.
 
     sched.add_job(bot_main, 'cron', ['get_power_rankings'], id='power_rankings',
-        day_of_week='tue', hour=18, minute=0, start_date=ff_start_date, end_date=ff_end_date,
+        day_of_week='wed', hour=18, minute=0, start_date=ff_start_date, end_date=ff_end_date,
         timezone=my_timezone, replace_existing=True)
     sched.add_job(bot_main, 'cron', ['worst_team'], id='worst_team',
-        day_of_week='tue', hour=18, minute=1, start_date=ff_start_date, end_date=ff_end_date,
+        day_of_week='wed', hour=18, minute=1, start_date=ff_start_date, end_date=ff_end_date,
         timezone=my_timezone, replace_existing=True)
     sched.add_job(bot_main, 'cron', ['get_final'], id='final',
-        day_of_week='tue', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
+        day_of_week='wed', hour=7, minute=30, start_date=ff_start_date, end_date=ff_end_date,
         timezone=my_timezone, replace_existing=True)
 
     print("Ready!")
